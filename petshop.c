@@ -4,6 +4,8 @@
     O código deve representar os animais através de uma struct com os seguintes membros: nome, tutor, serviço e status. 
 */
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 // Definição da estrutura do nó
 // nome, tutor, serviço e status.
@@ -15,11 +17,30 @@ typedef struct Node {
     struct Node *next;  // Ponteiro para o próximo nó
 } Node;
 
+Node* inicio = NULL;
+
 //criar nó
 //inserir na fila
 //
 
 
+
+
+void liberar_fila() {
+    Node *atual = inicio;
+    while (atual != NULL) {
+        Node *proximo = atual->next; // Armazena o próximo nó
+        free(atual);                 // Libera o nó atual
+        atual = proximo;             // Avança para o próximo nó
+    }
+}
+
+// Função para capturar dados do usuário
+void entrada_dados(char *buffer, size_t tamanho) {
+    if (fgets(buffer, tamanho, stdin)) {
+        buffer[strcspn(buffer, "\n")] = '\0'; // Remove o '\n' capturado
+    }
+}
 
 int main() {
     while (1) {
