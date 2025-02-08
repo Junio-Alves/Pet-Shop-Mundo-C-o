@@ -11,6 +11,7 @@
 // Definição da estrutura do nó
 // nome, tutor, serviço e status.
 typedef struct No {
+    int id;
     char nome_animal[50];      // Nome do estudante
     char nome_tutor[50];  // Nome do tutor
     char servico[50]; // [0] banho, [1] tosa ou [2] ambos
@@ -18,8 +19,20 @@ typedef struct No {
     struct No *proximo;  // Ponteiro para o próximo nó
 } No;
 
+typedef struct Fila {
+    No *inicio;
+    No *fim;
+} Fila;
 
-No* fila = NULL;
+Fila fila; 
+int id_contador;
+
+void inicializar_fila() {
+    fila.inicio = NULL;
+    fila.fim = NULL;
+}
+
+
 
 void limpa_terminal(){
     for (int i = 0; i < 10; i++) {
@@ -27,8 +40,8 @@ void limpa_terminal(){
     }
 }
 
-bool isEmpty( ){
-    if(fila->proximo == NULL){
+bool isEmpty(No* no){
+    if(no == NULL){
         return true;
     }
     return false;
@@ -46,22 +59,38 @@ No* criar_no(){
 
 
 //inserir na fila
-void inserir_fila(char *nome_animal,char *nome_tutor,char *servico){
+void inserir_fila(int id,char *nome_animal,char *nome_tutor,char *servico){
     No* novo_no = criar_no(); 
+    novo_no->id = id;
     strcpy(novo_no->nome_animal, nome_animal);
     strcpy(novo_no->nome_tutor, nome_tutor);
     strcpy(novo_no->servico, servico);
     strcpy(novo_no->status, "aguardando");
     novo_no->proximo = NULL;
-    if(isEmpty()){
-        fila = novo_no;
+    if(isEmpty(fila.inicio)){
+        fila.inicio = novo_no;
+        fila.fim = novo_no;
         return;
     }
-    
-    fila->proximo = novo_no;
-    
+    fila.fim->proximo = novo_no;
+    fila.fim = novo_no;
 }
 //
+void listar_animais_espera(){
+    limpa_terminal();
+    No *atual = fila.inicio;
+    if(isEmpty(atual)){
+         printf("Fila Vazia\n");
+         return;
+    }
+    printf("Animais em espera: ");
+    while (atual != NULL) {
+        printf("\n-------------------------\n");
+        printf("ID: %d\nNome Tutor: %s\nNome Animal: %s\nServiço: %s\nStatus: %s", atual->id,atual->nome_tutor, atual->nome_animal,atual->servico,atual->status);
+        printf("\n-------------------------");
+        atual = atual->proximo;
+    }
+}
 
 
 
@@ -103,17 +132,17 @@ int escolher_servico(char *servico){
         // Processa a escolha do usuário
         switch (opcao) {
             case 0:
-                servico = "banho";
+                strcpy(servico, "Banho");
                 sair = true;
                 return 0;
                 break;
             case 1:
-                servico = "tosa";
+                strcpy(servico, "Tosa");
                 sair = true;
                 return 0;
                 break;
             case 2:
-                servico = "ambos";
+                strcpy(servico, "Ambos");
                 sair = true;
                 return 0;
                 break;
@@ -139,7 +168,8 @@ void cadastrar_novo_animal(){
     entrada_dados(nome_animal,sizeof(nome_animal));
     //Verifica se o usuário decidiu sair
     if(escolher_servico(servico) != 1){
-       inserir_fila(nome_animal,nome_tutor,servico);
+       inserir_fila(id_contador,nome_animal,nome_tutor,servico);
+       id_contador++;
     };
     return;
 }
@@ -147,6 +177,8 @@ void cadastrar_novo_animal(){
 
 
 int main() {
+    inicializar_fila();
+    id_contador = 0;
     while (1) {
         limpa_terminal();
         int opcao;
@@ -174,6 +206,7 @@ int main() {
                 cadastrar_novo_animal();
                 break;
             case 2:
+                listar_animais_espera();
                 break;
             case 3:
                 break;
