@@ -11,8 +11,8 @@
 // Definição da estrutura do nó
 // nome, tutor, serviço e status.
 typedef struct No {
-    int id;
-    char nome_animal[50];      // Nome do estudante
+    int id; // ID 
+    char nome_animal[50];      // Nome do Animal
     char nome_tutor[50];  // Nome do tutor
     char servico[50]; // [0] banho, [1] tosa ou [2] ambos
     char status[50]; // ”aguardando", “em andamento" ou "finalizado"
@@ -20,10 +20,11 @@ typedef struct No {
 } No;
 
 typedef struct Fila {
-    No *inicio;
-    No *fim;
+    No *inicio; // Ponteiro para o inicio da fila
+    No *fim; // Ponteiro para o final
 } Fila;
 
+//PUBLICOS
 Fila fila; 
 int id_contador;
 
@@ -33,13 +34,14 @@ void inicializar_fila() {
 }
 
 
-
+//Para limpar o terminal, facilitando a leitura (falta ajustes)
 void limpa_terminal(){
     for (int i = 0; i < 10; i++) {
         printf("\n");
     }
 }
 
+//Verifica se a Fila está vazia
 bool isEmpty(No* no){
     if(no == NULL){
         return true;
@@ -75,7 +77,8 @@ void inserir_fila(int id,char *nome_animal,char *nome_tutor,char *servico){
     fila.fim->proximo = novo_no;
     fila.fim = novo_no;
 }
-//
+
+//Imprime todos os animais na lista de espera
 void listar_animais_espera(){
     limpa_terminal();
     No *atual = fila.inicio;
