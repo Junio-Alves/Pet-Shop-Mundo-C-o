@@ -74,9 +74,9 @@ void iniciar_servico();
 
 void finalizar_servico();
 
-void mover_de_lista(Fila *fila1, Fila *fila2, char *status);
-
 void cancelar_servico();
+
+void entregar_animais();
 
 
 
@@ -97,13 +97,12 @@ int main() {
         printf("----------------------------------------------------------\n");
         printf("Escolha uma opcao:\n");
         printf("[1] - Cadastrar Novo Animal\n");
-        printf("[2] - Ver Animais da lista de espera\n");
+        printf("[2] - Listar Animais\n");
         printf("[3] - Cancelar Serviço\n");
         printf("[4] - Modificar Animal da lista de espera\n");
         printf("[5] - Iniciar Serviço\n");
         printf("[6] - Finalizar Serviço\n");
         printf("[7] - Listar Animais\n"); //Ryan, liste as seguintes opções 0 - espera / 1 - finalizados / 2 - cancelados
-        printf("[8] - Entregar pets\n");
         printf("[0] - Sair\n");
         printf("Opcao: ");
         printf("----------------------------------------------------------\n");
@@ -132,7 +131,7 @@ int main() {
                 finalizar_servico();
                 break;
             case 7:
-                printf("qual lista deseja listar?\n1-lista de espera\n2-lista de andamento\n3-lista de finalizados");
+                printf("qual lista deseja listar?\n1-lista de espera\n2-lista de andamento\n3-lista de finalizados\n4-historico\n");
                 int resposta;
                 scanf("%d",&resposta);
                 getchar();
@@ -448,6 +447,10 @@ void finalizar_servico() {
 }
 
 void cancelar_servico(){
+    if(isEmpty(fila_espera->inicio)){
+        printf("Nenhum animal em espera\n");
+        return;
+    }
     int id;
     No *atual = fila_espera->inicio;
     No *anterior = NULL;
@@ -459,7 +462,7 @@ void cancelar_servico(){
     getchar();
     while (atual != NULL){
        if(atual->id == id){
-            if(strcmp(atual->status,"aguardando") == 0 ){
+            if(strcmp(atual->status,"em andamento") == 0 ){
                 printf("O cancelamento dos serviços só pode ser feito antes do serviço está em andamento.");
                 return;
             }
@@ -474,7 +477,11 @@ void cancelar_servico(){
             return;
        }
        anterior = atual;
+        fila_espera->tamanho--;
        atual = atual->proximo;
     }
     printf("ID de serviço não encontrado!\n");
+}
+void entregar_animais() {
+
 }
