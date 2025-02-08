@@ -234,21 +234,22 @@ void listar_animais(int opcao){
             //Fila de Espera
             case 1:
                 atual = fila_espera->inicio;
-                printf("Animais em espera: ");
+                printf("Animais em espera: %i", fila_espera->tamanho+1);
                 break;
             //Fila Andamento
             case 2:
                 atual = fila_andamento->inicio;
-                printf("Animais em andamento: ");
+                printf("Animais em andamento: %i", fila_andamento->tamanho+1);
                 break;
             //Fila Finalizados
             case 3:
                 atual = fila_finalizados->inicio;
-                printf("Animais em finalizados: ");
+                printf("Animais em finalizados: %i",fila_finalizados->tamanho+1);
                 break;
             //Historico
             case 4:
                 atual = historico->inicio;
+                printf("Animais em finalizados: %i",historico->tamanho+1);
                 break;
             default:
                 // Opção inválida
@@ -396,7 +397,6 @@ void iniciar_servico(){
                 fila_espera->tamanho--;
                 fila_andamento->tamanho++;
                 printf("Serviço iniciado com sucesso!\n");
-                printf("Serviço iniciado com sucesso!\n");
                 return;
             case 2:
                 return;
@@ -476,10 +476,10 @@ void cancelar_servico(){
             inserir_fila(historico, atual->id, atual->nome_animal,atual->nome_tutor, atual->servico, "cancelado" );
             free(atual);
             printf("Serviço cancelado com sucesso!\n");
+            fila_espera->tamanho--;
             return;
        }
        anterior = atual;
-        fila_espera->tamanho--;
        atual = atual->proximo;
     }
     printf("ID de serviço não encontrado!\n");
