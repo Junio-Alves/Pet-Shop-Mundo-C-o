@@ -9,27 +9,41 @@
 
 // Definição da estrutura do nó
 // nome, tutor, serviço e status.
-typedef struct Node {
+typedef struct No {
     char nome[50];      // Nome do estudante
     char tutor[50];  // Nome do tutor
     int servico; // [0] banho, [1] tosa ou [2] ambos
     int status; // ”aguardando", “em andamento" ou "finalizado"
-    struct Node *next;  // Ponteiro para o próximo nó
-} Node;
+    struct No *next;  // Ponteiro para o próximo nó
+} No;
 
-Node* inicio = NULL;
+typedef struct fila{
+    struct No *inicio;
+    struct No *fim;
+}FILA;
+
+No* inicio = NULL;
 
 //criar nó
+No* criar_no(){
+    No* novo_no = (No*)malloc(sizeof(No));
+    if(novo_no == NULL){
+        printf("Erro na alocação do Nó!");
+        return 0;
+    }
+    return novo_no;
+}
 //inserir na fila
+
 //
 
 
 
-
-void liberar_fila() {
-    Node *atual = inicio;
+//Função para liberar fila
+void liberar_fila(FILA *fila) {
+    No *atual = fila->inicio;
     while (atual != NULL) {
-        Node *proximo = atual->next; // Armazena o próximo nó
+        No *proximo = atual->next; // Armazena o próximo nó
         free(atual);                 // Libera o nó atual
         atual = proximo;             // Avança para o próximo nó
     }
@@ -48,7 +62,7 @@ int main() {
 
         // Exibe o menu de opções
         printf("Escolha uma opcao:\n");
-        printf("1 - Opção\n");
+        printf("1 - Cadastrar Novo Animal\n");
         printf("0 - Sair\n");
         printf("Opcao: ");
         scanf("%d", &opcao);
