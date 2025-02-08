@@ -15,7 +15,7 @@ typedef struct No {
     char nome_animal[50];      // Nome do Animal
     char nome_tutor[50];  // Nome do tutor
     char servico[50]; // [0] banho, [1] tosa ou [2] ambos
-    char status[50]; // ”aguardando", “em andamento" ou "finalizado"
+    char status[50]; // ”aguardando", “em andamento","finalizado" ou "cancelado"
     struct No *proximo;  // Ponteiro para o próximo nó
 } No;
 
@@ -319,9 +319,29 @@ void mover_de_lista() {
 }
 void cancelar_servico(){
     int id;
-    printf("AVISO: O cancelamento dos serviços só pode ser feito antes do serviço está em andamento.");
-    printf("Digite o ID do serviço: ");
+    No *atual = fila_espera->inicio;
+    No *anterior = NULL;
+    printf("\n----------------------------------------------------------------------------------------\n");
+    printf("AVISO: O cancelamento dos serviços só pode ser feito antes do serviço está em andamento.\n");
+    printf("Digite o ID do serviço: \n");
     scanf("%d", &id);
-    
-    
+    getchar();
+    while (atual != NULL){
+       if(strcmp(atual->status,"aguardando") == 0 && atual->id == id){
+            if(anterior == NULL){
+                fila_espera->inicio = atual->proximo;
+            }else{
+                anterior->proximo = atual->proximo;
+            }
+            printf("\n-------------------------\n");
+            printf("ID: %d\nNome Tutor: %s\nNome Animal: %s\nServiço: %s\nStatus: %s", atual->id,atual->nome_tutor, atual->nome_animal,atual->servico,atual->status);
+            printf("\n-------------------------\n");
+            free(atual);
+            printf("Serviço cancelado com sucesso!\n");
+            return;
+       }
+       anterior = atual;
+       atual = atual->proximo;
+    }
+    printf("ID de serviço não encontrado!\n");
 }
