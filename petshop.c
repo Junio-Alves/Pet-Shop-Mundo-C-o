@@ -234,22 +234,22 @@ void listar_animais(int opcao){
             //Fila de Espera
             case 1:
                 atual = fila_espera->inicio;
-                printf("Animais em espera: %i", fila_espera->tamanho+1);
+                printf("Animais em espera: %i", fila_espera->tamanho);
                 break;
             //Fila Andamento
             case 2:
                 atual = fila_andamento->inicio;
-                printf("Animais em andamento: %i", fila_andamento->tamanho+1);
+                printf("Animais em andamento: %i", fila_andamento->tamanho);
                 break;
             //Fila Finalizados
             case 3:
                 atual = fila_finalizados->inicio;
-                printf("Animais em finalizados: %i",fila_finalizados->tamanho+1);
+                printf("Animais em finalizados: %i",fila_finalizados->tamanho);
                 break;
             //Historico
             case 4:
                 atual = historico->inicio;
-                printf("Animais em finalizados: %i",historico->tamanho+1);
+                printf("Animais em finalizados: %i",historico->tamanho);
                 break;
             default:
                 // Opção inválida
@@ -337,8 +337,8 @@ void cadastrar_novo_animal(){
         strcpy(status,"aguardando");
         inserir_fila(fila_espera,id_contador,nome_animal,nome_tutor,servico,status);
         id_contador++;
-    };
-    return;
+        fila_espera->tamanho++;
+    }
 }
 void modificar_cadastro() {
     printf("qual cadastro deseja moficar?\n");
