@@ -20,6 +20,7 @@ typedef struct No {
 } No;
 
 typedef struct Fila {
+    char nome[50];
     No *inicio; // Ponteiro para o inicio da fila
     No *fim; // Ponteiro para o final
     int tamanho; // Tamanho da fila
@@ -45,12 +46,17 @@ bool isEmpty(No* no);
 //criar nó
 No* criar_no();
 
+No* remover_fila(Fila *fila);
+
 //inserir na fila
 void inserir_fila(Fila *fila,int id,char *nome_animal,char *nome_tutor,char *servico,char *status);
+
+void inserir_pilha(Fila *fila,int id,char *nome_animal,char *nome_tutor,char *servico,char *status);
 
 //Imprime todos os animais na lista de espera
 void listar_animais(int opcao);
 
+void imprimir_dados(No *atual);
 
 //Função para liberar fila
 void liberar_fila(No *fila);
@@ -64,15 +70,16 @@ void cadastrar_novo_animal();
 
 void modificar_cadastro();
 
-void mover_de_lista();
-
-void cancelar_servico();
-
 void iniciar_servico();
 
 void finalizar_servico();
-void imprimir_dados(No *atual);
-No* remover_fila(Fila *fila);
+
+void mover_de_lista(Fila *fila1, Fila *fila2, char *status);
+
+void cancelar_servico();
+
+
+
 
 
 int main() {
@@ -80,7 +87,7 @@ int main() {
     fila_andamento = criarFila(3);
     fila_finalizados = criarFila(3);
     historico = criarFila(0);
-    
+
     id_contador = 0;
     while (1) {
         limpa_terminal();
@@ -144,46 +151,6 @@ int main() {
     }
 }
 
-void iniciar_servico(){
-    if(isEmpty(fila_espera->inicio)){
-        printf("Nenhum animal na fila de espera\n");
-        return;
-    }
-    limpa_terminal();
-    printf("\n-----------------------------------\n");
-    printf("O proximo animal a ser atendido é:");
-    No *atual = fila_espera->inicio;
-    imprimir_dados(atual);
-    while (1){
-        printf("Deseja iniciar o serviço? [1] Sim [2] Não\n");
-        int resposta;
-        scanf("%d",&resposta);
-        getchar();
-        switch (resposta){
-        case 1:
-            if(fila_andamento->tamanho == fila_andamento->limite){
-                printf("Limite de animais em atendimento atingido\n");
-                return;
-            }
-            No* animal = remover_fila(fila_espera);
-            strcpy(animal->status,"em andamento");
-            inserir_fila(fila_andamento,animal->id,animal->nome_animal,animal->nome_tutor,animal->servico,animal->status);
-            free(animal);
-            fila_andamento->tamanho++;
-            printf("Serviço iniciado com sucesso!\n");
-            return;
-            break;
-        case 2:
-            return;
-            break;
-        default:
-            printf("Opção inválida\n");
-            break;
-        }
-    }
-    
-}
-void finalizar_servico(){}
 
 //Função para remover o primeiro nó da fila, e retornar o nó removido;
 No* remover_fila(Fila *fila){
@@ -243,6 +210,21 @@ void inserir_fila(Fila *fila,int id,char *nome_animal,char *nome_tutor,char *ser
     }
     fila->fim->proximo = novo_no;
     fila->fim = novo_no;
+}
+void inserir_pilha(Fila *fila,int id,char *nome_animal,char *nome_tutor,char *servico,char *status) {
+    No* novo_no = criar_no();
+    novo_no->id = id;
+    strcpy(novo_no->nome_animal, nome_animal);
+    strcpy(novo_no->nome_tutor, nome_tutor);
+    strcpy(novo_no->servico, servico);
+    strcpy(novo_no->status, status);
+    novo_no->proximo = fila->inicio;
+    if(isEmpty(fila->inicio)){
+        fila->inicio = novo_no;
+        fila->fim = novo_no;
+        return;
+    }
+    fila->inicio = novo_no;
 }
 
 //Imprime todos os animais na lista de espera
@@ -325,18 +307,14 @@ int escolher_servico(char *servico){
             case 0:
                 strcpy(servico, "Banho");
                 return 0;
-                break;
             case 1:
                 strcpy(servico, "Tosa");
                 return 0;
-                break;
             case 2:
                 strcpy(servico, "Ambos");
                 return 0;
-                break;
             case 3:
                 return 1;
-                break;
             default:
                 // Opção inválida
                 printf("Opcao invalida\n");
@@ -369,7 +347,7 @@ void modificar_cadastro() {
     scanf("%d",&resposta);
     getchar();
     No *aux = fila_andamento->inicio;
-    for (int i = 0; i < 3; i++){
+    for (int i = 0; i < fila_andamento->tamanho; i++){
         if(aux->id != resposta) {
             aux = aux->proximo;
         }else {
@@ -390,9 +368,85 @@ void modificar_cadastro() {
     }
     printf("id nao encotrado\n");
 }
-void mover_de_lista() {
-    
+void iniciar_servico(){
+    if(isEmpty(fila_espera->inicio)){
+        printf("Nenhum animal na fila de espera\n");
+        return;
+    }
+    limpa_terminal();
+    printf("\n-----------------------------------\n");
+    printf("O proximo animal a ser atendido é:");
+    No *atual = fila_espera->inicio;
+    imprimir_dados(atual);
+    while (1){
+        printf("Deseja iniciar o serviço? [1] Sim [2] Não\n");
+        int resposta;
+        scanf("%d",&resposta);
+        getchar();
+        switch (resposta){
+            case 1:
+                if((fila_andamento->tamanho == fila_andamento->limite)){
+                    printf("Limite de animais em atendimento atingido\n");
+                    return;
+                }
+                No* animal = remover_fila(fila_espera);
+                strcpy(animal->status, "em andamento");
+                inserir_fila(fila_andamento,animal->id,animal->nome_animal,animal->nome_tutor,animal->servico,animal->status);
+                free(animal);
+                fila_espera->tamanho--;
+                fila_andamento->tamanho++;
+                printf("Serviço iniciado com sucesso!\n");
+                printf("Serviço iniciado com sucesso!\n");
+                return;
+            case 2:
+                return;
+            default:
+                printf("Opção inválida\n");
+                break;
+        }
+    }
+
 }
+void finalizar_servico() {
+    if(isEmpty(fila_andamento->inicio)){
+        printf("Nenhum animal em andamento\n");
+        return;
+    }
+    limpa_terminal();
+    printf("\n-----------------------------------\n");
+    printf("O proximo animal a ser finalizado é:");
+    No *atual = fila_andamento->inicio;
+    imprimir_dados(atual);
+    while (1){
+        printf("Deseja iniciar o serviço? [1] Sim [2] Não\n");
+        int resposta;
+        scanf("%d",&resposta);
+        getchar();
+        switch (resposta){
+            case 1:
+                if((fila_finalizados->tamanho == fila_finalizados->limite)){
+                    printf("Limite de animais em atendimento atingido\n");
+                    return;
+                }
+                No* animal = remover_fila(fila_andamento);
+                strcpy(animal->status, "em andamento");
+                inserir_pilha(fila_finalizados,animal->id,animal->nome_animal,animal->nome_tutor,animal->servico,animal->status);
+                free(animal);
+
+            fila_andamento->tamanho--;
+                fila_finalizados->tamanho++;
+                printf("Serviço iniciado com sucesso!\n");
+                return;
+            case 2:
+                return;
+            default:
+                printf("Opção inválida\n");
+            break;
+        }
+    }
+
+}
+
 void cancelar_servico(){
     int id;
     No *atual = fila_espera->inicio;
