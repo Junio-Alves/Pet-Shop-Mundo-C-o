@@ -76,6 +76,8 @@ void finalizar_servico();
 
 void cancelar_servico();
 
+void adcionar_no_historico(No *item, char *estado);
+
 void entregar_animais();
 
 
@@ -102,7 +104,7 @@ int main() {
         printf("[4] - Modificar Animal da lista de espera\n");
         printf("[5] - Iniciar Serviço\n");
         printf("[6] - Finalizar Serviço\n");
-        printf("[7] - Listar Animais\n"); //Ryan, liste as seguintes opções 0 - espera / 1 - finalizados / 2 - cancelados
+        printf("[7] - entregar animais\n"); //Ryan, liste as seguintes opções 0 - espera / 1 - finalizados / 2 - cancelados
         printf("[0] - Sair\n");
         printf("Opcao: ");
         printf("----------------------------------------------------------\n");
@@ -115,8 +117,11 @@ int main() {
                 cadastrar_novo_animal();
                 break;
             case 2:
-                printf("%i",id_contador);
-                listar_animais(1);
+                printf("qual lista deseja listar?\n1-lista de espera\n2-lista de andamento\n3-lista de finalizados\n4-historico\n");
+                int resposta;
+                scanf("%d",&resposta);
+                getchar();
+                listar_animais(resposta);
                 break;
             case 3:
                 cancelar_servico();
@@ -131,11 +136,7 @@ int main() {
                 finalizar_servico();
                 break;
             case 7:
-                printf("qual lista deseja listar?\n1-lista de espera\n2-lista de andamento\n3-lista de finalizados\n4-historico\n");
-                int resposta;
-                scanf("%d",&resposta);
-                getchar();
-                listar_animais(resposta);
+                entregar_animais();
                 break;
             case 8:
                 break;
@@ -472,6 +473,7 @@ void cancelar_servico(){
                 anterior->proximo = atual->proximo;
             }
             imprimir_dados(atual);
+            inserir_fila(historico, atual->id, atual->nome_animal,atual->nome_tutor, atual->servico, "cancelado" );
             free(atual);
             printf("Serviço cancelado com sucesso!\n");
             return;
@@ -482,6 +484,18 @@ void cancelar_servico(){
     }
     printf("ID de serviço não encontrado!\n");
 }
-void entregar_animais() {
 
+void entregar_animais() {
+    if(fila_finalizados->tamanho != fila_finalizados->limite) {
+        printf("ainda nao tem 3 animais a serem entregues\n");
+        return;
+    }
+    No *atual = fila_finalizados->inicio;
+    for(int i = 0; i < fila_finalizados->tamanho; i++) {
+        inserir_fila(historico, atual->id, atual->nome_animal,atual->nome_tutor, atual->servico, "entregue" );
+        atual = atual->proximo;
+    }
+    liberar_fila(fila_finalizados->inicio);
+    fila_finalizados->inicio = NULL;
+    fila_finalizados->tamanho = 0;
 }
