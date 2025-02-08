@@ -14,16 +14,12 @@ typedef struct No {
     char nome_animal[50];      // Nome do estudante
     char nome_tutor[50];  // Nome do tutor
     char servico[50]; // [0] banho, [1] tosa ou [2] ambos
-    int status; // ”aguardando", “em andamento" ou "finalizado"
+    char status[50]; // ”aguardando", “em andamento" ou "finalizado"
     struct No *proximo;  // Ponteiro para o próximo nó
 } No;
 
-typedef struct fila{
-    struct No *inicio;
-    struct No *fim;
-}FILA;
 
-No* inicio = NULL;
+No* fila = NULL;
 
 void limpa_terminal(){
     for (int i = 0; i < 10; i++) {
@@ -31,8 +27,8 @@ void limpa_terminal(){
     }
 }
 
-bool isEmpty(FILA *fila){
-    if(fila->inicio->proximo == NULL){
+bool isEmpty( ){
+    if(fila->proximo == NULL){
         return true;
     }
     return false;
@@ -47,20 +43,31 @@ No* criar_no(){
     }
     return novo_no;
 }
+
+
 //inserir na fila
 void inserir_fila(char *nome_animal,char *nome_tutor,char *servico){
     No* novo_no = criar_no(); 
     strcpy(novo_no->nome_animal, nome_animal);
     strcpy(novo_no->nome_tutor, nome_tutor);
     strcpy(novo_no->servico, servico);
+    strcpy(novo_no->status, "aguardando");
+    novo_no->proximo = NULL;
+    if(isEmpty()){
+        fila = novo_no;
+        return;
+    }
+    
+    fila->proximo = novo_no;
+    
 }
 //
 
 
 
 //Função para liberar fila
-void liberar_fila(FILA *fila) {
-    No *atual = fila->inicio;
+void liberar_fila(No *fila) {
+    No *atual = fila;
     while (atual != NULL) {
         No *proximo = atual->proximo; // Armazena o próximo nó
         free(atual);                 // Libera o nó atual
@@ -151,9 +158,10 @@ int main() {
         printf("[2] - Ver Animais da lista de espera\n");
         printf("[3] - Remover Animal da lista de espera\n");
         printf("[4] - Modificar Animal da lista de espera\n");
-        printf("[5] - Finalizar Animal\n");
-        printf("[6] - Listar Animais em serviço\n"); //Ryan, liste as seguintes opções 0 - espera / 1 - finalizados / 2 - cancelados
-        printf("[7] - Entregar pets\n");
+        printf("[5] - Iniciar Serviço\n");
+        printf("[6] - Finalizar Serviço\n");
+        printf("[7] - Listar Animais em serviço\n"); //Ryan, liste as seguintes opções 0 - espera / 1 - finalizados / 2 - cancelados
+        printf("[8] - Entregar pets\n");
         printf("[0] - Sair\n");
         printf("Opcao: ");
         printf("----------------------------------------------------------\n");
@@ -174,6 +182,8 @@ int main() {
             case 5:
                 break;
             case 7:
+                break;
+            case 8:
                 break;
             case 0:
                 // Sai do programa liberando a memória
