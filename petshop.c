@@ -1,9 +1,10 @@
 /*
     Membros:
-        - Ryan de Oliveira
-        - Francisco Junio Alves Barros
+        - Ryan de Oliveira(86)98151-2204
+        - Francisco Junio Alves Barros(86)99430-8512
     GitHub:
         https://github.com/Junio-Alves/Pet-Shop-Mundo-C-o
+        Com todos os commits feitos por mim e pelo Ryan.
     Descrição:
         Implemente um código em C com estruturas de dados e uso dinâmico da memória que seja capaz de manter
         o controle de entrada e saída de animais (gato ou cachorro), em um pet shop.
@@ -39,7 +40,6 @@ typedef struct Fila
 // PUBLICOS
 int id_contador;
 
-// LISTAS
 Fila *fila_espera = NULL;
 Fila *fila_andamento = NULL;
 Fila *fila_finalizados = NULL;
@@ -55,7 +55,8 @@ bool isEmpty(No *no);
 // criar nó
 No *criar_no();
 
-No *remover_fila(Fila *fila, int id_servico);
+// Remove um nó da fila enviada
+No *remover_no(Fila *fila, int id_servico);
 
 // inserir na fila
 void inserir_fila(Fila *fila, int id, char *nome_animal, char *nome_tutor, char *tipo_animal, char *servico, char *status);
@@ -73,24 +74,34 @@ void liberar_memoria(No *fila);
 // Função para capturar dados do usuário
 void entrada_dados(char *buffer, size_t tamanho);
 
+//Lista todos os serviços
 int escolher_servico(char *servico);
 
+//cadastra um novo animal e serviço
 void cadastrar_novo_animal();
 
+// Função para modificar um animal da lista de espera
 void modificar_cadastro();
 
+// Inicia serviço
 void iniciar_servico();
 
+//finaliza serviço
 void finalizar_servico();
 
+//cancela serviço
 void cancelar_servico();
 
+// Entrega os animais finalizados
 void entregar_animais();
 
+// Exibe o menu de opções
 void lista_menu();
 
+//Move serviço de uma fila para outra
 void mover_de_fila(Fila *fila_origem, Fila *fila_destino, int id_servico, char *novo_status);
 
+// Para pausar a execução até que o usuário pressione a tecla enter
 void aperte_uma_tecla();
 
 int main()
@@ -162,12 +173,13 @@ int main()
 }
 
 // Função para remover o primeiro nó da fila, e retornar o nó removido;
-No *remover_fila(Fila *fila, int id_servico){
+No *remover_no(Fila *fila, int id_servico){
     No *atual = fila->inicio;
     No *anterior = NULL;
     while (atual != NULL){
         if(atual->id == id_servico){
             if(anterior == NULL){
+                anterior = fila->inicio;
                 fila->inicio = atual->proximo;
             }else{
                 anterior->proximo = atual->proximo;
@@ -190,7 +202,7 @@ void mover_de_fila(Fila *fila_origem, Fila *fila_destino, int id_servico, char *
     No *atual = fila_origem->inicio;
     while (atual != NULL){
         if(atual->id == id_servico){
-            No *animal = remover_fila(fila_origem, id_servico);
+            No *animal = remover_no(fila_origem, id_servico);
             if(animal == NULL){
                 printf("Erro ao mover animal\n");
                 return;
@@ -647,7 +659,7 @@ void finalizar_servico()
                 switch (resposta)
                 {
                 case 1:
-                    No *animal = remover_fila(fila_andamento, atual->id);
+                    No *animal = remover_no(fila_andamento, atual->id);
                     strcpy(animal->status, "em andamento");
                     inserir_pilha(fila_finalizados, animal->id, animal->nome_animal, animal->nome_tutor, animal->servico, animal->status);
                     fila_andamento->tamanho--;
