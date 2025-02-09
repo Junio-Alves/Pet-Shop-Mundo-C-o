@@ -412,10 +412,21 @@ void cadastrar_novo_animal()
     char nome_tutor[50];
     char servico[50];
     char status[50];
-    printf("Digite o nome do tutor: ");
-    entrada_dados(nome_tutor, sizeof(nome_tutor));
-    printf("Digite o nome do animal: ");
-    entrada_dados(nome_animal, sizeof(nome_animal));
+    do {
+        printf("Digite o nome do tutor: ");
+        entrada_dados(nome_tutor, sizeof(nome_tutor));
+        if (strlen(nome_tutor) < 3) {
+            printf("Nome do tutor ndever ter ao minimo 3 caracteres!\n");
+        }
+    } while (strlen(nome_tutor) < 3);
+
+    do {
+        printf("Digite o nome do animal: ");
+        entrada_dados(nome_animal, sizeof(nome_animal));
+        if (strlen(nome_animal) < 3) {
+            printf("Nome do animal dever ter ao minimo 3 caracteres!\n");
+        }
+    } while (strlen(nome_animal) < 3);
     // Verifica se o usuário decidiu sair
     if (escolher_servico(servico) != 1)
     {
