@@ -645,6 +645,7 @@ void entregar_animais()
     if (fila_finalizados->tamanho < fila_finalizados->limite)
     {
         printf("ainda nao tem 3 animais a serem entregues\n");
+        aperte_uma_tecla();
         return;
     }
     No *atual = fila_finalizados->inicio;
@@ -657,4 +658,5 @@ void entregar_animais()
     fila_finalizados->inicio = NULL;
     fila_finalizados->tamanho = 0;
     printf("animais entregues com sucesso\n");
+    aperte_uma_tecla();
 }
