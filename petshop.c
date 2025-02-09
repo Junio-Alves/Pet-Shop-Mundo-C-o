@@ -54,7 +54,7 @@ bool isEmpty(No *no);
 // criar nó
 No *criar_no();
 
-No *remover_fila(Fila *fila);
+No *remover_fila(Fila *fila, int id_servico);
 
 // inserir na fila
 void inserir_fila(Fila *fila, int id, char *nome_animal, char *nome_tutor, char *servico, char *status);
@@ -94,7 +94,7 @@ int main()
 {
     fila_espera = criarFila(0);
     fila_andamento = criarFila(3);
-    fila_finalizados = criarFila(3);
+    fila_finalizados = criarFila(0);
     historico = criarFila(0);
 
     id_contador = 0;
@@ -157,15 +157,51 @@ int main()
 }
 
 // Função para remover o primeiro nó da fila, e retornar o nó removido;
-No *remover_fila(Fila *fila)
-{
+No *remover_fila(Fila *fila, int id_servico){
     No *atual = fila->inicio;
-    fila->inicio = fila->inicio->proximo;
-    return atual;
+    No *anterior = NULL;
+    while (atual != NULL){
+        if(atual->id == id_servico){
+            if(anterior == NULL){
+                fila->inicio = atual->proximo;
+            }else{
+                anterior->proximo = atual->proximo;
+            }
+            return atual;
+        }
+        anterior = atual;
+        atual = atual->proximo;
+    }
+    printf("ID de serviço não encontrado!\n");
 }
 
-Fila *criarFila(int limite)
-{
+void mover_de_fila(Fila *fila_origem, Fila *fila_destino, int id_servico){
+    // Verifica se a fila de origem está vazia
+    // Filas com limite 0 não possuem limite.
+    if(fila_destino->limite != 0 && fila_destino->tamanho == fila_destino->limite){
+        printf("Limite da fila antigido\n");
+        return;
+    }
+    No *atual = fila_origem->inicio;
+    while (atual != NULL){
+        if(atual->id == id_servico){
+            No *animal = remover_fila(fila_origem, id_servico);
+            if(animal == NULL){
+                printf("Erro ao mover animal\n");
+                return;
+            }
+            inserir_fila(fila_destino, animal->id, animal->nome_animal, animal->nome_tutor, animal->servico, animal->status);
+            free(animal);
+            fila_origem->tamanho--;
+            fila_destino->tamanho++;
+            return;
+        }
+        atual = atual->proximo;
+    }
+    printf("ID de serviço não encontrado!\n");
+}
+
+Fila *criarFila(int limite){
     Fila *fila = (Fila *)malloc(sizeof(Fila));
     fila->inicio = NULL;
     fila->fim = NULL;
@@ -175,8 +211,7 @@ Fila *criarFila(int limite)
 }
 
 // Para limpar o terminal, facilitando a leitura (falta ajustes)
-void limpa_terminal()
-{
+void limpa_terminal(){
     for (int i = 0; i < 10; i++)
     {
         printf("\n");
@@ -212,8 +247,7 @@ bool isEmpty(No *no)
 }
 
 // criar nó
-No *criar_no()
-{
+No *criar_no(){
     No *novo_no = (No *)malloc(sizeof(No));
     if (novo_no == NULL)
     {
@@ -454,12 +488,7 @@ void iniciar_servico()
         switch (resposta)
         {
         case 1:
-            No *animal = remover_fila(fila_espera);
-            strcpy(animal->status, "em andamento");
-            inserir_fila(fila_andamento, animal->id, animal->nome_animal, animal->nome_tutor, animal->servico, animal->status);
-            free(animal);
-            fila_espera->tamanho--;
-            fila_andamento->tamanho++;
+            mover_de_fila(fila_espera, fila_andamento, atual->id);
             printf("Serviço iniciado com sucesso!\n");
             return;
         case 2:
@@ -492,19 +521,8 @@ void finalizar_servico()
         switch (resposta)
         {
         case 1:
-            if ((fila_finalizados->tamanho == fila_finalizados->limite))
-            {
-                printf("Limite de animais em atendimento atingido\n");
-                return;
-            }
-            No *animal = remover_fila(fila_andamento);
-            strcpy(animal->status, "em andamento");
-            inserir_pilha(fila_finalizados, animal->id, animal->nome_animal, animal->nome_tutor, animal->servico, animal->status);
-            free(animal);
-
-            fila_andamento->tamanho--;
-            fila_finalizados->tamanho++;
-            printf("Serviço iniciado com sucesso!\n");
+            mover_de_fila(fila_andamento, fila_finalizados, atual->id);
+            printf("Serviço finalizado com sucesso!\n");
             return;
         case 2:
             return;
