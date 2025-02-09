@@ -453,11 +453,34 @@ void cadastrar_novo_animal()
     }
     // Verifica se o usuário decidiu sair
     if (escolher_servico(servico) != 1)
-    {
+    {   
+        while (1) {
+            limpa_terminal();
+            printf("Confirme os dados:\n");
+            printf("Nome do Tutor: %s\n", nome_tutor);
+            printf("Nome do Animal: %s\n", nome_animal);
+            printf("Tipo de Animal: %s\n", tipo_animal);
+            printf("Serviço: %s\n", servico);
+            printf("Deseja cadastrar? [1] Sim [2] Não\n");
+            int resposta;
+            scanf("%d", &resposta);
+            getchar();
+            if (resposta == 1) {
+            break;
+            } else if (resposta == 2) {
+            printf("Cadastro cancelado.\n");
+            return;
+            } else {
+            printf("Opção inválida\n");
+            }
+        }
+        
         strcpy(status, "aguardando");
         inserir_fila(fila_espera, id_contador, nome_animal, nome_tutor, tipo_animal, servico, status);
         id_contador++;
         fila_espera->tamanho++;
+        printf("Cadastro realizado com sucesso!\n");
+        aperte_uma_tecla();
     }
 }
 
@@ -651,6 +674,21 @@ void entregar_animais()
         printf("Ainda não tem 3 animais a serem entregues\n");
         aperte_uma_tecla();
         return;
+    }
+    while (1) {
+        limpa_terminal();
+        listar_animais(3);
+        printf("Deseja entregar os animais finalizados? [1] Sim [2] Não\n");
+        int resposta;
+        scanf("%d", &resposta);
+        getchar();
+        if (resposta == 1) {
+            break;
+        } else if (resposta == 2) {
+            return;
+        } else {
+            printf("Opção inválida\n");
+        }
     }
     No *atual = fila_finalizados->inicio;
     for (int i = 0; i < fila_finalizados->tamanho; i++)
