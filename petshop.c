@@ -84,8 +84,6 @@ void finalizar_servico();
 
 void cancelar_servico();
 
-void adcionar_no_historico(No *item, char *estado);
-
 void entregar_animais();
 
 void lista_menu();
@@ -114,7 +112,7 @@ int main()
         printf("[4] - Modificar Animal da lista de espera\n");
         printf("[5] - Iniciar Serviço\n");
         printf("[6] - Finalizar Serviço\n");
-        printf("[7] - Entregar animais\n"); // Ryan, liste as seguintes opções 0 - espera / 1 - finalizados / 2 - cancelados
+        printf("[7] - Entregar animais\n"); 
         printf("[0] - Sair\n");
         printf("Opcao: ");
         printf("----------------------------------------------------------\n");
@@ -145,8 +143,6 @@ int main()
         case 7:
             entregar_animais();
             break;
-        case 8:
-            break;
         case 0:
             // Sai do programa liberando a memória
             printf("Saindo....");
@@ -174,7 +170,7 @@ No *remover_fila(Fila *fila, int id_servico){
         anterior = atual;
         atual = atual->proximo;
     }
-    printf("ID de serviço não encontrado!\n");
+    printf("ID de serviço não encontrado! [remover]\n");
 }
 
 void mover_de_fila(Fila *fila_origem, Fila *fila_destino, int id_servico, char *novo_status){
@@ -201,7 +197,7 @@ void mover_de_fila(Fila *fila_origem, Fila *fila_destino, int id_servico, char *
         }
         atual = atual->proximo;
     }
-    printf("ID de serviço não encontrado!\n");
+    printf("ID de serviço não encontrado! [mover]\n");
 }
 
 Fila *criarFila(int limite){
@@ -229,12 +225,15 @@ void lista_menu(){
         printf("Qual lista deseja exibir?\n[1]-Lista de Espera\n[2]-Lista de Andamento\n[3]-Lista de Finalizados\n[4]-Historico\n[0]-Sair\n");
         printf("----------------------------------------------------------\n");
         scanf("%d", &resposta);
+        getchar();
         if(resposta == 0) return;
         if(resposta < 1 || resposta > 4){
             printf("Valor invalido!Escolha entre 0 e 4.\n");
         }else{
-            getchar();
+            
             listar_animais(resposta);
+            printf("Pressione qualquer tecla para continuar\n");
+            getchar();
         }
     } 
 }
@@ -322,7 +321,7 @@ void listar_animais(int opcao)
     // Historico
     case 4:
         atual = historico->inicio;
-        printf("Animais em finalizados: %i", historico->tamanho);
+        printf("Historico: %i", historico->tamanho);
         break;
     default:
         // Opção inválida
@@ -339,8 +338,6 @@ void listar_animais(int opcao)
         imprimir_dados(atual);
         atual = atual->proximo;
     }
-    printf("Pressione qualquer tecla para voltar para o menu...");
-    getchar();
 }
 
 void imprimir_dados(No *atual)
@@ -524,6 +521,8 @@ void finalizar_servico()
         switch (resposta)
         {
         case 1:
+            inserir_fila(historico, atual->id, atual->nome_animal, atual->nome_tutor, atual->servico, "finalizado");
+            historico->tamanho++;
             mover_de_fila(fila_andamento, fila_finalizados, atual->id,"finalizado");
             printf("Serviço finalizado com sucesso!\n");
             return;
@@ -561,25 +560,15 @@ void cancelar_servico()
                 printf("O cancelamento dos serviços só pode ser feito antes do serviço está em andamento.");
                 return;
             }
-            if (anterior == NULL)
-            {
-                fila_espera->inicio = atual->proximo;
-            }
-            else
-            {
-                anterior->proximo = atual->proximo;
-            }
+            mover_de_fila(fila_espera, historico, atual->id, "cancelado");
             imprimir_dados(atual);
-            inserir_fila(historico, atual->id, atual->nome_animal, atual->nome_tutor, atual->servico, "cancelado");
-            free(atual);
             printf("Serviço cancelado com sucesso!\n");
-            fila_espera->tamanho--;
             return;
         }
         anterior = atual;
         atual = atual->proximo;
     }
-    printf("ID de serviço não encontrado!\n");
+    printf("ID de serviço não encontrado! [cancelar] \n");
 }
 
 void entregar_animais()
