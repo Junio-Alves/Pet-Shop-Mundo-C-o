@@ -68,7 +68,7 @@ void listar_animais(int opcao);
 void imprimir_dados(No *atual);
 
 // Função para liberar fila
-void liberar_fila(No *fila);
+void liberar_memoria(No *fila);
 
 // Função para capturar dados do usuário
 void entrada_dados(char *buffer, size_t tamanho);
@@ -108,7 +108,7 @@ int main()
 
         // Exibe o menu de opções
         printf("----------------------------------------------------------\n");
-        printf("Escolha uma opcao:\n");
+        printf("Bem-vindo ao PET SHOP\nEscolha uma opcao:\n");
         printf("[1] - Cadastrar Novo Animal/Serviço\n");
         printf("[2] - Listar Animais\n");
         printf("[3] - Cancelar Serviço\n");
@@ -148,10 +148,10 @@ int main()
             break;
         case 0:
             // Sai do programa liberando a memória
-            liberar_fila(fila_espera->inicio);
-            liberar_fila(fila_andamento->inicio);
-            liberar_fila(fila_finalizados->inicio);
-            liberar_fila(historico->inicio);
+            liberar_memoria(fila_espera->inicio);
+            liberar_memoria(fila_andamento->inicio);
+            liberar_memoria(fila_finalizados->inicio);
+            liberar_memoria(historico->inicio);
             printf("Saindo....");
             return 0;
         default:
@@ -360,7 +360,7 @@ void imprimir_dados(No *atual)
     printf("\n------------------------------------\n");
 }
 // Função para liberar fila
-void liberar_fila(No *fila)
+void liberar_memoria(No *fila)
 {
     No *atual = fila;
     while (atual != NULL)
@@ -457,7 +457,7 @@ void cadastrar_novo_animal()
     }
     // Verifica se o usuário decidiu sair
     if (escolher_servico(servico) != 1)
-    {   
+    {
         while (1) {
             limpa_terminal();
             printf("Confirme os dados:\n");
@@ -478,7 +478,7 @@ void cadastrar_novo_animal()
             printf("Opção inválida\n");
             }
         }
-        
+
         strcpy(status, "aguardando");
         inserir_fila(fila_espera, id_contador, nome_animal, nome_tutor, tipo_animal, servico, status);
         id_contador++;
@@ -734,7 +734,7 @@ void entregar_animais()
         inserir_fila(historico, atual->id, atual->nome_animal, atual->nome_tutor, atual->tipo_animal, atual->servico, "entregue");
         atual = atual->proximo;
     }
-    liberar_fila(fila_finalizados->inicio);
+    liberar_memoria(fila_finalizados->inicio);
     fila_finalizados->inicio = NULL;
     historico->tamanho += fila_finalizados->tamanho;
     fila_finalizados->tamanho = 0;
