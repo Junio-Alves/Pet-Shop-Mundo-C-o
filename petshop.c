@@ -250,9 +250,9 @@ bool isEmpty(No *no)
     return false;
 }
 
-// Para pausar a execução até que o usuário pressione uma tecla
+// Para pausar a execução até que o usuário pressione a tecla enter
 void aperte_uma_tecla(){
-    printf("Pressione qualquer tecla para continuar....\n");
+    printf("Pressione enter para continuar....\n");
     getchar();
 }
 
@@ -463,7 +463,7 @@ void cadastrar_novo_animal()
 
 void modificar_cadastro()
 {
-    printf("qual cadastro deseja moficar?\n");
+    printf("Digite o ID do serviço que deseja moficar?\n");
     listar_animais(1);
     printf("selecione o id:\n");
     int resposta;
@@ -572,8 +572,8 @@ void finalizar_servico()
     No *atual = fila_andamento->inicio;
     No *anterior = NULL;
     printf("\n-----------------------------------\n");
-    printf("Qual serviço deseja Finalizar?: \n");
     listar_animais(2);
+    printf("Digite o ID do serviço que deseja Finalizar?: \n");
     scanf("%d", &id);
     getchar();
     while (atual != NULL){
@@ -606,6 +606,7 @@ void finalizar_servico()
         atual = atual->proximo;
     }
     printf("ID de serviço não encontrado!\n");
+    aperte_uma_tecla();
 }
 
 void cancelar_servico()
@@ -613,14 +614,15 @@ void cancelar_servico()
     if (isEmpty(fila_espera->inicio))
     {
         printf("Nenhum animal em espera\n");
+        aperte_uma_tecla();
         return;
     }
     int id;
     No *atual = fila_espera->inicio;
     printf("\n----------------------------------------------------------------------------------------\n");
     printf("AVISO: O cancelamento dos serviços só pode ser feito antes do serviço está em andamento.\n");
-    printf("Qual serviço deseja cancelar?: \n");
     listar_animais(1);
+    printf("Qual serviço deseja cancelar?: \n");
     scanf("%d", &id);
     getchar();
     while (atual != NULL){
@@ -633,18 +635,20 @@ void cancelar_servico()
             mover_de_fila(fila_espera, historico, atual->id, "cancelado");
             imprimir_dados(atual);
             printf("Serviço cancelado com sucesso!\n");
+            aperte_uma_tecla();
             return;
         }
         atual = atual->proximo;
     }
     printf("ID de serviço não encontrado! [cancelar] \n");
+    aperte_uma_tecla();
 }
 
 void entregar_animais()
 {
     if (fila_finalizados->tamanho < fila_finalizados->limite)
     {
-        printf("ainda nao tem 3 animais a serem entregues\n");
+        printf("Ainda não tem 3 animais a serem entregues\n");
         aperte_uma_tecla();
         return;
     }
@@ -656,7 +660,8 @@ void entregar_animais()
     }
     liberar_fila(fila_finalizados->inicio);
     fila_finalizados->inicio = NULL;
+    historico->tamanho += fila_finalizados->tamanho;
     fila_finalizados->tamanho = 0;
-    printf("animais entregues com sucesso\n");
+    printf("Animais entregues com sucesso!!\n");
     aperte_uma_tecla();
 }
