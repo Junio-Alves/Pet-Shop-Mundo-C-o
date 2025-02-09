@@ -168,10 +168,12 @@ No *remover_no(Fila *fila, int id_servico){
     while (atual != NULL){
         if(atual->id == id_servico){
             if(anterior == NULL){
+                anterior = fila->inicio;
                 fila->inicio = atual->proximo;
             }else{
                 anterior->proximo = atual->proximo;
             }
+            free(anterior);
             return atual;
         }
         anterior = atual;
