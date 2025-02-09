@@ -90,6 +90,8 @@ void entregar_animais();
 
 void lista_menu();
 
+void mover_de_fila(Fila *fila_origem, Fila *fila_destino, int id_servico, char *novo_status);
+
 int main()
 {
     fila_espera = criarFila(0);
@@ -175,7 +177,7 @@ No *remover_fila(Fila *fila, int id_servico){
     printf("ID de serviço não encontrado!\n");
 }
 
-void mover_de_fila(Fila *fila_origem, Fila *fila_destino, int id_servico){
+void mover_de_fila(Fila *fila_origem, Fila *fila_destino, int id_servico, char *novo_status){
     // Verifica se a fila de origem está vazia
     // Filas com limite 0 não possuem limite.
     if(fila_destino->limite != 0 && fila_destino->tamanho == fila_destino->limite){
@@ -190,6 +192,7 @@ void mover_de_fila(Fila *fila_origem, Fila *fila_destino, int id_servico){
                 printf("Erro ao mover animal\n");
                 return;
             }
+            strcpy(animal->status, novo_status);
             inserir_fila(fila_destino, animal->id, animal->nome_animal, animal->nome_tutor, animal->servico, animal->status);
             free(animal);
             fila_origem->tamanho--;
@@ -488,7 +491,7 @@ void iniciar_servico()
         switch (resposta)
         {
         case 1:
-            mover_de_fila(fila_espera, fila_andamento, atual->id);
+            mover_de_fila(fila_espera, fila_andamento, atual->id, "em andamento");
             printf("Serviço iniciado com sucesso!\n");
             return;
         case 2:
@@ -521,7 +524,7 @@ void finalizar_servico()
         switch (resposta)
         {
         case 1:
-            mover_de_fila(fila_andamento, fila_finalizados, atual->id);
+            mover_de_fila(fila_andamento, fila_finalizados, atual->id,"finalizado");
             printf("Serviço finalizado com sucesso!\n");
             return;
         case 2:
