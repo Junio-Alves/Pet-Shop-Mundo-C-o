@@ -508,31 +508,41 @@ void finalizar_servico()
         return;
     }
     limpa_terminal();
-    printf("\n-----------------------------------\n");
-    printf("O proximo animal a ser finalizado é:");
+    int id;
     No *atual = fila_andamento->inicio;
-    imprimir_dados(atual);
-    while (1)
-    {
-        printf("Deseja iniciar o serviço? [1] Sim [2] Não\n");
-        int resposta;
-        scanf("%d", &resposta);
-        getchar();
-        switch (resposta)
-        {
-        case 1:
-            inserir_fila(historico, atual->id, atual->nome_animal, atual->nome_tutor, atual->servico, "finalizado");
-            historico->tamanho++;
-            mover_de_fila(fila_andamento, fila_finalizados, atual->id,"finalizado");
-            printf("Serviço finalizado com sucesso!\n");
-            return;
-        case 2:
-            return;
-        default:
-            printf("Opção inválida\n");
-            break;
+    No *anterior = NULL;
+    printf("\n-----------------------------------\n");
+    printf("Qual serviço deseja Finalizar?: \n");
+    listar_animais(2);
+    scanf("%d", &id);
+    getchar();
+    while (atual != NULL){
+        if(atual->id == id){
+            while (1){   
+                printf("Deseja finalizar o serviço? [1] Sim [2] Não\n");
+                int resposta;
+                scanf("%d", &resposta);
+                getchar();
+                switch (resposta)
+                {
+                case 1:
+                    inserir_fila(historico, atual->id, atual->nome_animal, atual->nome_tutor, atual->servico, "finalizado");
+                    historico->tamanho++;
+                    mover_de_fila(fila_andamento, fila_finalizados, atual->id,"finalizado");
+                    printf("Serviço finalizado com sucesso!\n");
+                    return;
+                case 2:
+                    return;
+                default:
+                    printf("Opção inválida\n");
+                    break;
+                }
+            }
         }
+        anterior = atual;
+        atual = atual->proximo;
     }
+    printf("ID de serviço não encontrado!\n");
 }
 
 void cancelar_servico()
@@ -551,10 +561,8 @@ void cancelar_servico()
     listar_animais(1);
     scanf("%d", &id);
     getchar();
-    while (atual != NULL)
-    {
-        if (atual->id == id)
-        {
+    while (atual != NULL){
+        if (atual->id == id){
             if (strcmp(atual->status, "em andamento") == 0)
             {
                 printf("O cancelamento dos serviços só pode ser feito antes do serviço está em andamento.");
