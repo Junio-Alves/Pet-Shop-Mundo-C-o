@@ -55,7 +55,7 @@ bool isEmpty(No *no);
 // criar nó
 No *criar_no();
 
-No *remover_fila(Fila *fila, int id_servico);
+No *remover_no(Fila *fila, int id_servico);
 
 // inserir na fila
 void inserir_fila(Fila *fila, int id, char *nome_animal, char *nome_tutor, char *tipo_animal, char *servico, char *status);
@@ -162,7 +162,7 @@ int main()
 }
 
 // Função para remover o primeiro nó da fila, e retornar o nó removido;
-No *remover_fila(Fila *fila, int id_servico){
+No *remover_no(Fila *fila, int id_servico){
     No *atual = fila->inicio;
     No *anterior = NULL;
     while (atual != NULL){
@@ -190,7 +190,7 @@ void mover_de_fila(Fila *fila_origem, Fila *fila_destino, int id_servico, char *
     No *atual = fila_origem->inicio;
     while (atual != NULL){
         if(atual->id == id_servico){
-            No *animal = remover_fila(fila_origem, id_servico);
+            No *animal = remover_no(fila_origem, id_servico);
             if(animal == NULL){
                 printf("Erro ao mover animal\n");
                 return;
@@ -647,7 +647,7 @@ void finalizar_servico()
                 switch (resposta)
                 {
                 case 1:
-                    No *animal = remover_fila(fila_andamento, atual->id);
+                    No *animal = remover_no(fila_andamento, atual->id);
                     strcpy(animal->status, "em andamento");
                     inserir_pilha(fila_finalizados, animal->id, animal->nome_animal, animal->nome_tutor, animal->servico, animal->status);
                     fila_andamento->tamanho--;
