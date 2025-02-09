@@ -537,9 +537,12 @@ void finalizar_servico()
                 switch (resposta)
                 {
                 case 1:
-                    inserir_fila(historico, atual->id, atual->nome_animal, atual->nome_tutor, atual->servico, "finalizado");
-                    historico->tamanho++;
-                    mover_de_fila(fila_andamento, fila_finalizados, atual->id,"finalizado");
+                    No *animal = remover_fila(fila_andamento, atual->id);
+                    strcpy(animal->status, "em andamento");
+                    inserir_pilha(fila_finalizados, animal->id, animal->nome_animal, animal->nome_tutor, animal->servico, animal->status);
+                    free(animal);
+                    fila_andamento->tamanho--;
+                    fila_finalizados->tamanho++;
                     printf("Serviço finalizado com sucesso!\n");
                     return;
                 case 2:
