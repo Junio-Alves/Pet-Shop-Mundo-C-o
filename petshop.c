@@ -347,10 +347,10 @@ void modificar_cadastro() {
     int resposta;
     scanf("%d",&resposta);
     getchar();
-    No *aux = fila_andamento->inicio;
-    for (int i = 0; i < fila_andamento->tamanho; i++){
-        if(aux->id != resposta) {
-            aux = aux->proximo;
+    No *atual = fila_espera->inicio;
+    while(atual != NULL){
+        if(atual->id != resposta) {
+            atual = atual->proximo;
         }else {
             char nome_animal[50];
             char nome_tutor[50];
@@ -360,9 +360,9 @@ void modificar_cadastro() {
             printf("Digite o nome do animal: ");
             entrada_dados(nome_animal,sizeof(nome_animal));
             if(escolher_servico(servico) != 1){
-                strcpy(aux->nome_animal, nome_animal);
-                strcpy(aux->nome_tutor, nome_tutor);
-                strcpy(aux->servico,servico);
+                strcpy(atual->nome_animal, nome_animal);
+                strcpy(atual->nome_tutor, nome_tutor);
+                strcpy(atual->servico,servico);
             }
             return;
         }
