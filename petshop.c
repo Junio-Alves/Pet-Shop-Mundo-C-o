@@ -21,6 +21,7 @@ typedef struct No
     int id;               // ID
     char nome_animal[50]; // Nome do Animal
     char nome_tutor[50];  // Nome do tutor
+    char tipo_animal[10]; // [0] gato, [1] cachorro
     char servico[50];     // [0] banho, [1] tosa ou [2] ambos
     char status[50];      // ”aguardando", “em andamento","finalizado" ou "cancelado"
     struct No *proximo;   // Ponteiro para o próximo nó
@@ -57,7 +58,7 @@ No *criar_no();
 No *remover_fila(Fila *fila, int id_servico);
 
 // inserir na fila
-void inserir_fila(Fila *fila, int id, char *nome_animal, char *nome_tutor, char *servico, char *status);
+void inserir_fila(Fila *fila, int id, char *nome_animal, char *nome_tutor, char *tipo_animal, char *servico, char *status);
 
 void inserir_pilha(Fila *fila, int id, char *nome_animal, char *nome_tutor, char *servico, char *status);
 
@@ -112,7 +113,7 @@ int main()
         printf("[4] - Modificar Animal da lista de espera\n");
         printf("[5] - Iniciar Serviço\n");
         printf("[6] - Finalizar Serviço\n");
-        printf("[7] - Entregar animais\n"); 
+        printf("[7] - Entregar animais\n");
         printf("[0] - Sair\n");
         printf("Opcao: ");
         printf("----------------------------------------------------------\n");
@@ -189,7 +190,7 @@ void mover_de_fila(Fila *fila_origem, Fila *fila_destino, int id_servico, char *
                 return;
             }
             strcpy(animal->status, novo_status);
-            inserir_fila(fila_destino, animal->id, animal->nome_animal, animal->nome_tutor, animal->servico, animal->status);
+            inserir_fila(fila_destino, animal->id, animal->nome_animal, animal->nome_tutor, animal->tipo_animal, animal->servico, animal->status);
             free(animal);
             fila_origem->tamanho--;
             fila_destino->tamanho++;
@@ -217,7 +218,7 @@ void limpa_terminal(){
     }
 }
 
-void lista_menu(){   
+void lista_menu(){
     limpa_terminal();
     while (1){
         int resposta;
@@ -230,12 +231,12 @@ void lista_menu(){
         if(resposta < 1 || resposta > 4){
             printf("Valor invalido!Escolha entre 0 e 4.\n");
         }else{
-            
+
             listar_animais(resposta);
             printf("Pressione qualquer tecla para continuar\n");
             getchar();
         }
-    } 
+    }
 }
 
 // Verifica se a Fila está vazia
@@ -260,12 +261,13 @@ No *criar_no(){
 }
 
 // inserir na fila
-void inserir_fila(Fila *fila, int id, char *nome_animal, char *nome_tutor, char *servico, char *status)
+void inserir_fila(Fila *fila, int id, char *nome_animal, char *nome_tutor, char *tipo_animal, char *servico, char *status)
 {
     No *novo_no = criar_no();
     novo_no->id = id;
     strcpy(novo_no->nome_animal, nome_animal);
     strcpy(novo_no->nome_tutor, nome_tutor);
+    strcpy(novo_no->tipo_animal, tipo_animal);
     strcpy(novo_no->servico, servico);
     strcpy(novo_no->status, status);
     novo_no->proximo = NULL;
@@ -343,7 +345,7 @@ void listar_animais(int opcao)
 void imprimir_dados(No *atual)
 {
     printf("\n-----------------------------------\n");
-    printf("ID: %d\nNome Tutor: %s\nNome Animal: %s\nServiço: %s\nStatus: %s", atual->id, atual->nome_tutor, atual->nome_animal, atual->servico, atual->status);
+    printf("ID: %d\nNome Tutor: %s\nNome Animal: %s\nTipo de Animal: %s\nServiço: %s\nStatus: %s", atual->id, atual->nome_tutor, atual->nome_animal,atual->tipo_animal,  atual->servico, atual->status);
     printf("\n------------------------------------\n");
 }
 // Função para liberar fila
@@ -410,6 +412,7 @@ void cadastrar_novo_animal()
     limpa_terminal();
     char nome_animal[50];
     char nome_tutor[50];
+    char tipo_animal[10];
     char servico[50];
     char status[50];
     do {
@@ -426,12 +429,25 @@ void cadastrar_novo_animal()
         if (strlen(nome_animal) < 3) {
             printf("Nome do animal dever ter ao minimo 3 caracteres!\n");
         }
-    } while (strlen(nome_animal) < 3);
+    }while (strlen(nome_animal) < 3);
+    int opcao = 0;
+    while(opcao>2 || opcao<1) {
+        printf("Qual é o tipo de animal?\n[1]gato [2]cahorro\n");
+        scanf("%i", &opcao);
+        if(opcao>2 || opcao<1) {
+            printf("opcao invalida\n");
+        }
+    }
+    if(opcao == 1) {
+        strcpy(tipo_animal, "gato");
+    }else {
+        strcpy(tipo_animal, "cachorro");
+    }
     // Verifica se o usuário decidiu sair
     if (escolher_servico(servico) != 1)
     {
         strcpy(status, "aguardando");
-        inserir_fila(fila_espera, id_contador, nome_animal, nome_tutor, servico, status);
+        inserir_fila(fila_espera, id_contador, nome_animal, nome_tutor, tipo_animal, servico, status);
         id_contador++;
         fila_espera->tamanho++;
     }
@@ -456,11 +472,25 @@ void modificar_cadastro()
         {
             char nome_animal[50];
             char nome_tutor[50];
+            char tipo_animal[10];
             char servico[50];
             printf("Digite o nome do tutor: ");
             entrada_dados(nome_tutor, sizeof(nome_tutor));
             printf("Digite o nome do animal: ");
             entrada_dados(nome_animal, sizeof(nome_animal));
+            int opcao = 0;
+            while(opcao>2 || opcao<1) {
+                printf("[1]gato [2]cahorro\n");
+                scanf("%i", &opcao);
+                if(opcao>2 || opcao<1) {
+                    printf("opcao invalida\n");
+                }
+            }
+            if(opcao == 1) {
+                strcpy(tipo_animal, "gato");
+            }else {
+                strcpy(tipo_animal, "cachorro");
+            }
             if (escolher_servico(servico) != 1)
             {
                 strcpy(atual->nome_animal, nome_animal);
@@ -529,7 +559,7 @@ void finalizar_servico()
     getchar();
     while (atual != NULL){
         if(atual->id == id){
-            while (1){   
+            while (1){
                 printf("Deseja finalizar o serviço? [1] Sim [2] Não\n");
                 int resposta;
                 scanf("%d", &resposta);
@@ -540,7 +570,7 @@ void finalizar_servico()
                     No *animal = remover_fila(fila_andamento, atual->id);
                     strcpy(animal->status, "em andamento");
                     inserir_pilha(fila_finalizados, animal->id, animal->nome_animal, animal->nome_tutor, animal->servico, animal->status);
-                    inserir_fila(historico, atual->id, atual->nome_animal, atual->nome_tutor, atual->servico, "finalizado");
+                    inserir_fila(historico, atual->id, atual->nome_animal, atual->nome_tutor, atual->tipo_animal, atual->servico, "finalizado");
                     free(animal);
                     historico->tamanho++;
                     fila_andamento->tamanho--;
@@ -597,7 +627,7 @@ void cancelar_servico()
 
 void entregar_animais()
 {
-    if (fila_finalizados->tamanho != fila_finalizados->limite)
+    if (fila_finalizados->tamanho < 3)
     {
         printf("ainda nao tem 3 animais a serem entregues\n");
         return;
@@ -605,7 +635,7 @@ void entregar_animais()
     No *atual = fila_finalizados->inicio;
     for (int i = 0; i < fila_finalizados->tamanho; i++)
     {
-        inserir_fila(historico, atual->id, atual->nome_animal, atual->nome_tutor, atual->servico, "entregue");
+        inserir_fila(historico, atual->id, atual->nome_animal, atual->nome_tutor, atual->tipo_animal, atual->servico, "entregue");
         atual = atual->proximo;
     }
     liberar_fila(fila_finalizados->inicio);
