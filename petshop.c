@@ -91,6 +91,8 @@ void lista_menu();
 
 void mover_de_fila(Fila *fila_origem, Fila *fila_destino, int id_servico, char *novo_status);
 
+void aperte_uma_tecla();
+
 int main()
 {
     fila_espera = criarFila(0);
@@ -233,8 +235,7 @@ void lista_menu(){
         }else{
 
             listar_animais(resposta);
-            printf("Pressione qualquer tecla para continuar\n");
-            getchar();
+            aperte_uma_tecla();
         }
     }
 }
@@ -247,6 +248,12 @@ bool isEmpty(No *no)
         return true;
     }
     return false;
+}
+
+// Para pausar a execução até que o usuário pressione uma tecla
+void aperte_uma_tecla(){
+    printf("Pressione qualquer tecla para continuar....\n");
+    getchar();
 }
 
 // criar nó
@@ -308,22 +315,22 @@ void listar_animais(int opcao)
     // Fila de Espera
     case 1:
         atual = fila_espera->inicio;
-        printf("Animais em espera: %i", fila_espera->tamanho);
+        printf("Animais em espera: %i\n", fila_espera->tamanho);
         break;
     // Fila Andamento
     case 2:
         atual = fila_andamento->inicio;
-        printf("Animais em andamento: %i", fila_andamento->tamanho);
+        printf("Animais em andamento: %i\n", fila_andamento->tamanho);
         break;
     // Fila Finalizados
     case 3:
         atual = fila_finalizados->inicio;
-        printf("Animais em finalizados: %i", fila_finalizados->tamanho);
+        printf("Animais em finalizados: %i\n", fila_finalizados->tamanho);
         break;
     // Historico
     case 4:
         atual = historico->inicio;
-        printf("Historico: %i", historico->tamanho);
+        printf("Historico: %i\n", historico->tamanho);
         break;
     default:
         // Opção inválida
@@ -510,11 +517,13 @@ void iniciar_servico()
     if (isEmpty(fila_espera->inicio))
     {
         printf("Nenhum animal na fila de espera\n");
+        aperte_uma_tecla();
         return;
     }
     if ((fila_andamento->tamanho == fila_andamento->limite))
     {
         printf("Limite de animais em atendimento atingido\n");
+        aperte_uma_tecla();
         return;
     }
     limpa_terminal();
@@ -533,6 +542,7 @@ void iniciar_servico()
         case 1:
             mover_de_fila(fila_espera, fila_andamento, atual->id, "em andamento");
             printf("Serviço iniciado com sucesso!\n");
+            aperte_uma_tecla();
             return;
         case 2:
             return;
@@ -548,11 +558,13 @@ void finalizar_servico()
     if (isEmpty(fila_andamento->inicio))
     {
         printf("Nenhum animal em andamento\n");
+        aperte_uma_tecla();
         return;
     }
     if (fila_finalizados->tamanho == fila_finalizados->limite)
     {
         printf("pilha de entrega ja esta cheia\n");
+        aperte_uma_tecla();
         return;
     }
     limpa_terminal();
@@ -580,6 +592,7 @@ void finalizar_servico()
                     fila_andamento->tamanho--;
                     fila_finalizados->tamanho++;
                     printf("Serviço finalizado com sucesso!\n");
+                    aperte_uma_tecla();
                     return;
                 case 2:
                     return;
