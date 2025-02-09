@@ -148,6 +148,10 @@ int main()
             break;
         case 0:
             // Sai do programa liberando a memória
+            liberar_fila(fila_espera->inicio);
+            liberar_fila(fila_andamento->inicio);
+            liberar_fila(fila_finalizados->inicio);
+            liberar_fila(historico->inicio);
             printf("Saindo....");
             return 0;
         default:
@@ -486,9 +490,8 @@ void cadastrar_novo_animal()
 
 void modificar_cadastro()
 {
-    printf("Digite o ID do serviço que deseja moficar?\n");
     listar_animais(1);
-    printf("selecione o id:\n");
+    printf("Digite o ID do serviço que deseja modificar?\n");
     int resposta;
     scanf("%d", &resposta);
     getchar();
@@ -501,39 +504,74 @@ void modificar_cadastro()
         }
         else
         {
-            char nome_animal[50];
-            char nome_tutor[50];
-            char tipo_animal[10];
-            char servico[50];
-            printf("Digite o nome do tutor: ");
-            entrada_dados(nome_tutor, sizeof(nome_tutor));
-            printf("Digite o nome do animal: ");
-            entrada_dados(nome_animal, sizeof(nome_animal));
-            int opcao = 0;
-            while(opcao>2 || opcao<1) {
-                printf("[1]gato [2]cahorro\n");
-                scanf("%i", &opcao);
+            while (1)
+            {
+                limpa_terminal();
+                printf("O que deseja modificar?\n");
+                printf("[1] Nome do Tutor\n");
+                printf("[2] Nome do Animal\n");
+                printf("[3] Tipo de Animal\n");
+                printf("[4] Serviço\n");
+                printf("[5] Sair\n");
+                int opcao;
+                scanf("%d", &opcao);
                 getchar();
-                if(opcao>2 || opcao<1) {
-                    printf("opcao invalida\n");
+                switch (opcao)
+                {
+                case 1:
+                    printf("Digite o novo nome do tutor: ");
+                    entrada_dados(atual->nome_tutor, sizeof(atual->nome_tutor));
+                    printf("Modificação feita com sucesso!\n");
+                    break;
+                case 2:
+                    printf("Digite o novo nome do animal: ");
+                    entrada_dados(atual->nome_animal, sizeof(atual->nome_animal));
+                    printf("Modificação feita com sucesso!\n");
+                    break;
+                case 3:
+                    while (1)
+                    {
+                        printf("[1] Gato [2] Cachorro\n");
+                        int tipo;
+                        scanf("%d", &tipo);
+                        getchar();
+                        if (tipo == 1)
+                        {
+                            strcpy(atual->tipo_animal, "gato");
+                            printf("Modificação feita com sucesso!\n");
+                            break;
+                        }
+                        else if (tipo == 2)
+                        {
+                            strcpy(atual->tipo_animal, "cachorro");
+                            printf("Modificação feita com sucesso!\n");
+                            break;
+                        }
+                        else
+                        {
+                            printf("Opção inválida\n");
+                        }
+                    }
+                    break;
+                case 4:
+                    if (escolher_servico(atual->servico) == 1)
+                    {
+                        printf("Modificação cancelada\n");
+                        return;
+                    }
+                    break;
+                case 5:
+                    return;
+                default:
+                    printf("Opção inválida\n");
                 }
             }
-            if(opcao == 1) {
-                strcpy(tipo_animal, "gato");
-            }else {
-                strcpy(tipo_animal, "cachorro");
-            }
-            if (escolher_servico(servico) != 1)
-            {
-                strcpy(atual->nome_animal, nome_animal);
-                strcpy(atual->nome_tutor, nome_tutor);
-                strcpy(atual->servico, servico);
-            }
-            return;
         }
     }
-    printf("id nao encotrado\n");
+    printf("ID não encontrado\n");
+    aperte_uma_tecla();
 }
+
 
 void iniciar_servico()
 {
@@ -643,9 +681,9 @@ void cancelar_servico()
     int id;
     No *atual = fila_espera->inicio;
     printf("\n----------------------------------------------------------------------------------------\n");
-    printf("AVISO: O cancelamento dos serviços só pode ser feito antes do serviço está em andamento.\n");
     listar_animais(1);
-    printf("Qual serviço deseja cancelar?: \n");
+    printf("AVISO: O cancelamento dos serviços só pode ser feito antes do serviço está em andamento.\n");
+    printf("Digite o ID do serviço que deseja cancelar!: \n");
     scanf("%d", &id);
     getchar();
     while (atual != NULL){
@@ -655,8 +693,8 @@ void cancelar_servico()
                 printf("O cancelamento dos serviços só pode ser feito antes do serviço está em andamento.");
                 return;
             }
-            mover_de_fila(fila_espera, historico, atual->id, "cancelado");
             imprimir_dados(atual);
+            mover_de_fila(fila_espera, historico, atual->id, "cancelado");
             printf("Serviço cancelado com sucesso!\n");
             aperte_uma_tecla();
             return;
