@@ -95,7 +95,7 @@ int main()
 {
     fila_espera = criarFila(0);
     fila_andamento = criarFila(3);
-    fila_finalizados = criarFila(0);
+    fila_finalizados = criarFila(3);
     historico = criarFila(0);
 
     id_contador = 0;
@@ -550,6 +550,11 @@ void finalizar_servico()
         printf("Nenhum animal em andamento\n");
         return;
     }
+    if (fila_finalizados->tamanho == fila_finalizados->limite)
+    {
+        printf("pilha de entrega ja esta cheia\n");
+        return;
+    }
     limpa_terminal();
     int id;
     No *atual = fila_andamento->inicio;
@@ -638,4 +643,5 @@ void entregar_animais()
     liberar_fila(fila_finalizados->inicio);
     fila_finalizados->inicio = NULL;
     fila_finalizados->tamanho = 0;
+    printf("animais entregues com sucesso\n");
 }
