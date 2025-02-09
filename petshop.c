@@ -434,6 +434,7 @@ void cadastrar_novo_animal()
     while(opcao>2 || opcao<1) {
         printf("Qual é o tipo de animal?\n[1]gato [2]cahorro\n");
         scanf("%i", &opcao);
+        getchar();
         if(opcao>2 || opcao<1) {
             printf("opcao invalida\n");
         }
@@ -482,6 +483,7 @@ void modificar_cadastro()
             while(opcao>2 || opcao<1) {
                 printf("[1]gato [2]cahorro\n");
                 scanf("%i", &opcao);
+                getchar();
                 if(opcao>2 || opcao<1) {
                     printf("opcao invalida\n");
                 }
@@ -570,9 +572,6 @@ void finalizar_servico()
                     No *animal = remover_fila(fila_andamento, atual->id);
                     strcpy(animal->status, "em andamento");
                     inserir_pilha(fila_finalizados, animal->id, animal->nome_animal, animal->nome_tutor, animal->servico, animal->status);
-                    inserir_fila(historico, atual->id, atual->nome_animal, atual->nome_tutor, atual->tipo_animal, atual->servico, "finalizado");
-                    free(animal);
-                    historico->tamanho++;
                     fila_andamento->tamanho--;
                     fila_finalizados->tamanho++;
                     printf("Serviço finalizado com sucesso!\n");
@@ -600,7 +599,6 @@ void cancelar_servico()
     }
     int id;
     No *atual = fila_espera->inicio;
-    No *anterior = NULL;
     printf("\n----------------------------------------------------------------------------------------\n");
     printf("AVISO: O cancelamento dos serviços só pode ser feito antes do serviço está em andamento.\n");
     printf("Qual serviço deseja cancelar?: \n");
@@ -619,7 +617,6 @@ void cancelar_servico()
             printf("Serviço cancelado com sucesso!\n");
             return;
         }
-        anterior = atual;
         atual = atual->proximo;
     }
     printf("ID de serviço não encontrado! [cancelar] \n");
@@ -627,7 +624,7 @@ void cancelar_servico()
 
 void entregar_animais()
 {
-    if (fila_finalizados->tamanho < 3)
+    if (fila_finalizados->tamanho < fila_finalizados->limite)
     {
         printf("ainda nao tem 3 animais a serem entregues\n");
         return;
